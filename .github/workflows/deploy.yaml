@@ -53,9 +53,6 @@ jobs:
     name: "Terraform_destroy"
     if: ${{ github.event.inputs.action == 'Terraform_destroy' }}
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ github.event.inputs.resource }}
     steps:
       - name: AWS Plan Copy
         run: aws s3 cp s3://terraform-destroyer-magv/backend.tf terraform.tfstate
