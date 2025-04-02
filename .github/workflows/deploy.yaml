@@ -74,7 +74,7 @@ jobs:
         uses: hashicorp/setup-terraform@v2
 
       - name: Inicializar Terraform
-        run: terraform init -upgrade
+        run: terraform init -reconfigure
 
       - name: Show Destroy plan
         run: terraform plan -destroy
