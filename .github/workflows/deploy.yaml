@@ -51,6 +51,14 @@ jobs:
     if: ${{ github.event.inputs.action == 'Terraform_destroy' }}
     runs-on: ubuntu-latest
     steps:
+      - name: Configurar AWS CLI
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN}}
+          aws-region: ${{ secrets.REGION}}
+
       - name: AWS Plan Copy
         run: aws s3 cp s3://terraform-destroyer-magv/backend.tf terraform.tfstate
         id: copy
