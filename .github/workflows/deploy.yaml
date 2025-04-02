@@ -30,7 +30,7 @@ jobs:
       - name: Descargar el estado de Terraform desde S3 (si existe)
         id: download_tfstate
         continue-on-error: true  # Sigue aunque el archivo no exista
-        run: aws s3 cp s3://terraform-destroyer-magv/backend.tf terraform.tf || echo "No se encontró tfstate"
+        run: aws s3 cp s3://terraform-destroyer-magv/terraform.tfstate terraform.tfstate || echo "No se encontró tfstate"
 
       - name: Inicializar Terraform
         run: terraform init
@@ -60,7 +60,7 @@ jobs:
           aws-region: ${{ secrets.REGION}}
 
       - name: AWS Plan Copy
-        run: aws s3 cp s3://terraform-destroyer-magv/backend.tf terraform.tf
+        run: aws s3 cp s3://terraform-destroyer-magv/terraform.tfstate terraform.tfstate
         id: copy
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
