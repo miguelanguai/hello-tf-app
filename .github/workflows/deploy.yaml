@@ -33,7 +33,7 @@ jobs:
         run: aws s3 cp s3://terraform-destroyer-magv/terraform.tfstate terraform.tfstate || echo "No se encontró tfstate"
 
       - name: Inicializar Terraform
-        run: terraform init
+        run: terraform init -upgrade
 
       - name: Planear Terraform
         id: plan
@@ -74,7 +74,7 @@ jobs:
         uses: hashicorp/setup-terraform@v2
 
       - name: Inicializar Terraform
-        run: terraform init
+        run: terraform init -upgrade
 
       - name: Show Destroy plan
         run: terraform plan -destroy
