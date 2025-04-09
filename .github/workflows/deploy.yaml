@@ -33,6 +33,9 @@ jobs:
         continue-on-error: true  # Sigue aunque el archivo no exista
         run: aws s3 cp s3://terraform-destroyer-magv/terraform.tfstate terraform.tfstate || echo "No se encontró tfstate"
 
+      - name: Instalar Terraform
+        uses: hashicorp/setup-terraform@v2
+
       - name: Inicializar Terraform
         run: terraform init -upgrade
 
