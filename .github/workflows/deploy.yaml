@@ -20,12 +20,13 @@ jobs:
       - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: Configurar credenciales de AWS
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-        run: echo "Configuración de AWS lista"
+      - name: Configurar AWS CLI
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN}}
+          aws-region: ${{ secrets.REGION}}
 
       - name: Descargar el estado de Terraform desde S3 (si existe)
         id: download_tfstate
@@ -34,6 +35,9 @@ jobs:
 
       - name: Inicializar Terraform
         run: terraform init -upgrade
+
+      - name: Ver proveedores
+        run: terraform providers
 
       - name: Planear Terraform
         id: plan
@@ -44,7 +48,11 @@ jobs:
         run: terraform apply -auto-approve tfplan
 
       - name: Guardar el nuevo estado en S3
-        run: aws s3 cp terraform.tfstate s3://terraform-destroyer-magv/backend.tf
+        run: aws s3 cp terraform.tfstate s3://terraform-destroyer-magv/terraform.tfstate
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.REGION }}
   
   terraform_destroy:
     name: "Terraform_destroy"
@@ -76,6 +84,9 @@ jobs:
       - name: Inicializar Terraform
         run: terraform init -reconfigure
 
+      - name: Ver proveedores
+        run: terraform providers
+
       - name: Show Destroy plan
         run: terraform plan -destroy
         continue-on-error: true
@@ -86,7 +97,7 @@ jobs:
 
       - name: Delete plan file
         if: steps.destroy.outcome == 'success'
-        run: aws s3 rm s3://terraform-destroyer-magv/backend.tf
+        run: aws s3 rm s3://terraform-destroyer-magv/terraform.tfstate
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
