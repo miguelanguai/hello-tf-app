@@ -49,7 +49,7 @@ resource "aws_instance" "app_server" {
             # Clonar el repositorio de GitHub
             cd /home/ec2-user
             git clone https://github.com/miguelanguai/hello-tf-app
-            cd mi-app-tf
+            cd hello-tf-app
             
             # Construir y ejecutar el contenedor Docker
             docker build -t mi-aplicacion .
